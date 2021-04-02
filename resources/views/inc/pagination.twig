@@ -1,0 +1,54 @@
+{% set link_limit = 7 %}
+{% if paginator.lastPage() > 1 %}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">
+            {{ trans('admin::pagination.text', {'from' : paginator.firstItem(), 'to' : paginator.lastItem(), 'total' : paginator.total()}) }}
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="dataTables_paginate paging_simple_numbers" id="datatable_paginate">
+            <ul class="pagination">
+
+                {% if paginator.currentPage() == 1 %}
+                    <li class="paginate_button previous disabled" aria-controls="datatable" tabindex="0" id="datatable_previous">
+                        <a href="javascript:void(0);">{{ trans('pagination.previous')|raw }}</a>
+                    </li>
+                {% else %}
+                    <li class="paginate_button previous" aria-controls="datatable" tabindex="0" id="datatable_previous">
+                        <a href="{{ paginator.url(paginator.currentPage() - 1) }}">{{ trans('pagination.previous')|raw }}</a>
+                    </li>
+                {% endif %}
+
+                {% for i in 1..paginator.lastPage() %}
+                    {% set half_total_links = link_limit // 2 %}
+                    {% set from_p = paginator.currentPage() - half_total_links %}
+                    {% set to_p = paginator.currentPage() + half_total_links %}
+                    {% if paginator.currentPage() < half_total_links %}
+                        {% set to_p = to_p + (half_total_links - paginator.currentPage()) %}
+                    {% endif %}
+                    {% if paginator.lastPage() - paginator.currentPage() < half_total_links %}
+                        {% set from_p = from_p - (half_total_links - (paginator.lastPage() - paginator.currentPage()) - 1) %}
+                    {% endif %}
+                    {% if from_p < i and i < to_p %}
+                    <li class="paginate_button{{ paginator.currentPage() == i ? ' active' : '' }}" aria-controls="datatable" tabindex="0">
+                        <a href="{{ paginator.url(i) }}">{{ i }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if paginator.currentPage() == paginator.lastPage() %}
+                    <li class="paginate_button next disabled" aria-controls="datatable" tabindex="0" id="datatable_next">
+                        <a href="javascript:void(0);">{{ trans('pagination.next')|raw }}</a>
+                    </li>
+                {% else %}
+                    <li class="paginate_button next" aria-controls="datatable" tabindex="0" id="datatable_next">
+                        <a href="{{ paginator.url(paginator.currentPage() + 1) }}">{{ trans('pagination.next')|raw }}</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}

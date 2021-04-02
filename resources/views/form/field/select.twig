@@ -1,0 +1,36 @@
+{% extends 'admin::form.field._layout' %}
+{% block input %}
+    {% filter html_inline %}
+        <select class="{{ options.select2 ? 'select2' : 'form-control' }} {{ options.class }} cms-field-select" name="{{ name }}{% if options.multiple %}[]{% endif %}" id="{{ id }}"
+
+        {% if readonly %}readonly{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if options.multiple %}multiple="multiple"{% endif %}
+        {% if required %}
+            data-bv-notempty="true"
+            data-bv-notempty-message='{{ trans('admin::form.validation.not_empty', {label: options.label}) }}'
+        {% endif %}
+        >
+    {% endfilter %}
+
+    {% set v = old(name, value) %}
+    {% for ck,cv in choices %}
+        {% if cv is iterable %}
+            <optgroup label="{{ ck }}">
+                {% for gck,gcv in cv %}
+                    {% set selected = options.multiple ? gck in v : gck == v %}
+                    <option value="{{ gck }}" {% if selected %}selected{% endif %}>{{ gcv }}</option>
+                {% endfor %}
+            </optgroup>
+        {% else %}
+            {% set selected = options.multiple ? ck in v : ck == v %}
+            <option value="{{ ck }}" {% if selected %}selected{% endif %}>{{ cv }}</option>
+        {% endif %}
+    {% endfor %}
+
+    </select>
+
+    {% if options.help %}
+        <span class="help-block"><small>{{ options.help|nl2br }}</small></span>
+    {% endif %}
+{% endblock %}

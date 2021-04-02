@@ -1,0 +1,16 @@
+{% extends 'admin::form.field._layout' %}
+{% block input %}
+    {% if not disabled %}
+        <input type="hidden" name="{{ name }}" value="{{ options.value_off|default(0) }}" />
+    {% endif %}
+    <div class="checkbox checkbox-custom">
+        {% set active = old(name, value) %}
+        <input id="{{ id }}" type="checkbox" name="{{ name }}" value="{{ options.value_on|default(1) }}"
+               {% if active %}checked{% endif %}
+                {% if disabled %}disabled{% endif %} />
+        <label for="{{ id }}">{{ options.placeholder }}</label>
+    </div>
+    {% if options.help %}
+        <span class="help-block"><small>{{ options.help|nl2br }}</small></span>
+    {% endif %}
+{% endblock %}

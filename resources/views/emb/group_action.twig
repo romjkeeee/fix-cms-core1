@@ -1,0 +1,29 @@
+<div class="row ent-action" data-url="{{ url }}">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="btn-group dropdown dropin">
+            <button disabled type="button" class="btn btn-default waves-light dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false">{{ trans('admin::common.group_action') }} &nbsp; <i class="caret"></i></button>
+            <ul class="dropdown-menu" role="menu">
+                {% block menu %}{% endblock %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade js-list-delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">{{ trans('admin::common.confirm') }}</h4>
+            </div>
+            <div class="modal-body">
+                <span class="js-one">{{ trans('admin::common.delete_question') }}</span>
+                <span class="js-many">{{ trans('admin::common.delete_group_question') }}</span>
+            </div>
+            <button type="button" class="btn btn-danger waves-effect waves-light js-ok">{{ trans('admin::common.yes') }}</button>
+            <span class="close close-popup" data-dismiss="modal" aria-hidden="true">
+                <button type="button" class="btn btn-white waves-effect">{{ trans('admin::common.no') }}</button>
+            </span>
+        </div>
+    </div>
+</div>

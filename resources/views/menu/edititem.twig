@@ -1,0 +1,155 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    <div class="card-box">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+
+                {{ form_open(form) }}
+
+                {{ form_field(form, 'id') }}
+                {{ form_field(form, 'menu_id', {value: parentMenu.id}) }}
+
+                {% for locale, _ in config('app.locales') %}
+                    {{ form_field(form, 'name_'~locale) }}
+                {% endfor %}
+
+                {{ form_field(form, 'parent_id') }}
+                {{ form_field(form, 'url', {class: 'js-url'}) }}
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="212">{{ trans('admin::menu.name_entity') }}</label>
+                    <div class="col-sm-10 radio-tabs">
+
+                        {% for entity in entities %}
+                            <div class="radio radio-custom tab-r">
+                                <input type="radio" class="js-entity" id="r-entity-{{ loop.index }}" name="entity" value="{{ entity.getUrl() }}" {% if entity.match(item.url) %}checked{% endif %} data-idx="{{ loop.index }}">
+                                <label for="r-entity-{{ loop.index }}">{{ trans(entity.getDescription()) }}</label>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="radio-tab-content">
+
+                            {% for entity in entities %}
+                                {% if entity.isMultiple() %}
+
+                                    <div class="item-r-tab">
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label" for="tab-portfolio">{{ trans('admin::menu.specify_choice') }}</label>
+                                            <div class="col-sm-10 col-md-8 col-lg-6 selectContainer">
+                                                <select class="form-control js-custom-mul" data-idx="{{ loop.index }}" data-style="btn-default btn-custom">
+                                                    {% for option in entity.getOptions() %}
+                                                        <option value="{{ option.url }}" {% if option.match(item.url) %}selected{% endif %}>{{ option.description }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                {% else %}
+                                    {% if not entity.getUrl() %}
+
+                                        <div class="item-r-tab">
+                                            <div class="form-group">
+                                                <label class="col-md-2 control-label" for="chose">{{ trans('admin::menu.specify_choice') }}</label>
+                                                <div class="col-sm-10 col-md-8 col-lg-6">
+                                                    <input type="text" id="chose" value="{{ old('url', item.url) }}" class="form-control js-custom" placeholder="">
+                                                    <div class="checkbox checkbox-custom col-md-10" style="padding-left:20px;">
+                                                        {% set target = old('target', item.target) %}
+                                                        <input type="hidden" name="target" value="0" />
+                                                        <input type="checkbox" id="in-new-window" name="target" value="1" {% if target %}checked{% endif %}>
+                                                        <label for="in-new-window">
+                                                            {{ trans('admin::menu.open_new_tab') }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    {% else %}
+                                        <div class="item-r-tab"></div>
+                                    {% endif %}
+                                {% endif %}
+
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_submit(form) }}
+                {{ form_close(form) }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(function() {
+            function tabs() {
+                $(".item-r-tab").hide();
+                $(".item-r-tab select").prop('disabled', true);
+                $(".item-r-tab input").prop('disabled', true);
+
+                if ($(".tab-r input:checked").parent('.tab-r').index() >= 0) {
+                    $(".tab-r input:checked").parent('.tab-r').addClass("active");
+                    $(".item-r-tab").eq($(".tab-r input:checked").parent('.tab-r').index()).fadeIn(0);
+                    $(".item-r-tab").eq($(".tab-r input:checked").parent('.tab-r').index()).find('select').prop('disabled', false);
+                    $(".item-r-tab").eq($(".tab-r input:checked").parent('.tab-r').index()).find('input').prop('disabled', false);
+                }
+
+                $(".tab-r").click(function () {
+                    $(".tab-r").removeClass("active").eq($(this).index()).addClass("active");
+                    $(".item-r-tab select").prop('disabled', true);
+                    $(".item-r-tab").hide().eq($(this).index()).fadeIn(0);
+                    $(".item-r-tab").eq($(this).index()).find('select').prop('disabled', false);
+                    $(".item-r-tab").eq($(this).index()).find('input').prop('disabled', false);
+                });
+            }
+            tabs();
+
+            function tabsPlus() {
+                var $url = $('.js-url');
+                var $custom = $('.js-custom');
+                var $customMul = $('.js-custom-mul');
+                var $entities = $('.js-entity');
+
+                $entities.on('change', function() {
+                    var idx = $(this).data('idx');
+                    var val = $(this).val();
+                    if (val == '') {
+                        val = $custom.val();
+                    }
+                    if (val == '*') {
+                        var $sel = $('.js-custom-mul[data-idx='+idx+']');
+                        val = $sel.val();
+                    }
+                    $url.val(val);
+                });
+
+                $custom.on('change input keypress', function() {
+                    var val = $(this).val();
+                    $url.val(val);
+                });
+
+                $customMul.on('change', function () {
+                    var val = $(this).val();
+                    $url.val(val);
+                });
+
+                if (!$entities.is(':checked')) {
+                    $entities.filter('[value=""]').trigger('click');
+                }
+            }
+            tabsPlus();
+
+        });
+
+    </script>
+{% endblock %}

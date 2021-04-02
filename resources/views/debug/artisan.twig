@@ -1,0 +1,48 @@
+{% extends 'admin::layout' %}
+
+{% block styles %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.terminal@1.9.0/css/jquery.terminal.min.css" />
+{% endblock %}
+
+{% block content %}
+    <div id="webartisan"></div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery.terminal@1.9.0/js/jquery.terminal.min.js"></script>
+    <script>
+        var rpc = {{ route('admin::artisan_rpc')|json_encode|raw }};
+        $('#webartisan').terminal(function (command, term) {
+                if (command.indexOf('artisan') === 0 || command.indexOf('artisan') === 7) {
+                    var req = CMS.ajaxPost(rpc, {
+                        //cmd: command
+                        cmd: command.replace(/^artisan ?/, '')
+                    });
+                    req.done(function(resp) {
+                        term.echo(resp.output);
+                    })
+                } else if (command === 'help') {
+                    term.echo('Available commands are:');
+                    term.echo('');
+                    term.echo("clear\tClear console");
+                    term.echo('help\tThis help text');
+                    term.echo('artisan\tartisan command');
+                    term.echo('quit\tQuit web artisan');
+                } else if (command === 'quit') {
+                    term.echo('There is no exit.');
+                } else {
+                    term.echo('Unknown command.');
+                }
+            }, {
+                width: 600,
+                height: 480,
+                greetings: 'Web artisan console',
+                name: 'laravel-webartisan',
+                prompt: '$ '
+            }
+        );
+        $('html').on('keydown', function () {
+            $('#webartisan').click();
+        });
+    </script>
+{% endblock %}

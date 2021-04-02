@@ -1,0 +1,88 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    {% embed 'admin::emb.top_btn' %}
+        {% block main %}
+
+            {% if can('permission', 'role.edit') %}
+                <a href="{{ route('admin::user_editrole') }}" class="btn btn-default waves-effect waves-light"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>{{ trans('admin::user.role_add') }}</a>
+            {% endif %}
+
+        {% endblock %}
+    {% endembed %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box table-responsive">
+                {% if acl_roles|length %}
+                <table id="datatable" class="table table-striped table-bordered ent-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <div class="checkbox checkbox-custom">
+                                <input type="checkbox">
+                                <label></label>
+                            </div>
+                        </th>
+                        <th>#</th>
+                        <th>{{ trans('admin::common.action') }}</th>
+                        <th>{{ trans('admin::user.name') }}</th>
+                        <th>{{ trans('admin::user.description') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in acl_roles %}
+                        <tr>
+                            <td>
+                                <div class="checkbox checkbox-custom">
+                                    <input type="checkbox" value="{{ item.id }}">
+                                    <label ></label>
+                                </div>
+                            </td>
+                            <td>{{ item.id }}</td>
+                            <td class="text-nowrap">
+                                {% if can('permission', 'role.edit') %}
+                                    <a href="{{ route('admin::user_editrole', {id: item.id}) }}" data-toggle="tooltip" title="{{ trans('admin::common.tt_edit') }}"><i class="fa fa-pencil"></i></a>
+                                {% endif %}
+
+                                {% if can('permission', 'user.list') %}
+                                    <a href="{{ route('admin::user_list') }}?role={{ item.id }}" data-toggle="tooltip" title="{{ trans('admin::user.title') }}"><i class="fa fa-users"></i></a>
+                                {% endif %}
+
+                                {% if can('permission', 'role.delete') and (user.acl_role.id != item.id) %}
+                                    <a href="#" data-action="delete" data-toggle="tooltip" title="{{ trans('admin::common.tt_delete') }}"><i class="fa fa-trash-o"></i></a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if can('permission', 'role.edit') %}
+                                    <a href="{{ route('admin::user_editrole', {id: item.id}) }}" class="name-link">{{ item.name }}</a>
+                                {% else %}
+                                    {{ item.name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ item.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    {{ trans('admin::common.empty') }}
+                {% endif %}
+
+                {% include 'admin::inc.pagination' with {paginator: acl_roles} %}
+            </div>
+
+            {% if acl_roles|length %}
+                {% embed 'admin::emb.group_action' with {url: route('admin::role_action')} %}
+                    {% block menu %}
+                        {% if can('permission', 'role.delete') %}
+                            <li><a href="#" data-action="delete"><i class="fa fa-trash-o">&nbsp;&nbsp;</i>{{ trans('admin::common.delete') }}</a></li>
+                        {% endif %}
+                    {% endblock %}
+                {% endembed %}
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

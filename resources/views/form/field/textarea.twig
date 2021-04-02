@@ -1,0 +1,18 @@
+{% extends 'admin::form.field._layout' %}
+{% block input %}
+    {% filter html_inline %}
+        <textarea class="form-control {{ options.class }}" id="{{ id }}" name="{{ name }}"
+        {% if options.placeholder %}placeholder="{{ options.placeholder }}"{% endif %}
+        {% if readonly %}readonly{% endif %}
+        {% if disabled %}disabled{% endif %}
+        {% if options.rows %}rows="{{ options.rows }}"{% endif %}
+        {% if required %}
+            data-bv-notempty="true"
+            data-bv-notempty-message='{{ trans('admin::form.validation.not_empty', {label: options.label}) }}'
+        {% endif %}
+    {% endfilter %}>{{ old(name, value) }}</textarea>
+
+    {% if options.help %}
+        <span class="help-block"><small>{{ options.help|nl2br }}</small></span>
+    {% endif %}
+{% endblock %}

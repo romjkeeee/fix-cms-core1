@@ -1,0 +1,48 @@
+{% extends 'admin::layout' %}
+{% import 'admin::logs.macro' as macro %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel-group" id="logs-list">
+
+                {% for log in logs %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#logs-list" href="#log-{{ loop.index }}" aria-expanded="false" class="collapsed">
+                                    {{ log.name }}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="log-{{ loop.index }}" class="panel-collapse collapse {% if loop.first %}in{% endif %}">
+                            <div class="panel-body">
+
+                                <p><strong>{{ trans('admin::log.last_modified') }} {{ log.modified|date('Y-m-d H:i:s') }}</strong></p>
+
+                                <ul class="list-unstyled m-t-10">
+                                    {% for entry in log.content %}
+                                    <li class="">
+                                        {{ macro.row_table(entry) }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+
+                                {% if log.hasMore %}
+                                    <a href="{{ route('admin::logs_view', {file: log.name}) }}" class="btn btn-default waves-effect waves-light m-t-10">
+                                        {{ trans('admin::log.show_full') }}
+                                        <span class="btn-label btn-label-right"><i class="fa fa-arrow-right"></i></span>
+                                    </a>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

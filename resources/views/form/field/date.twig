@@ -1,0 +1,24 @@
+{% extends 'admin::form.field._layout' %}
+{% block input %}
+    <div class="input-group">
+
+        {% filter html_inline %}
+            <input type="text" class="form-control cms-field-date" id="{{ id }}" name="{{ name }}" value="{{ old(name, value) }}"
+
+                   placeholder="{{ options.placeholder|default(trans('admin::form.date.placeholder')) }}"
+                   {% if readonly %}readonly{% endif %}
+                   {% if disabled %}disabled{% endif %}
+
+                   {% if required %}
+                       data-bv-notempty="true"
+                       data-bv-notempty-message='{{ trans('admin::form.validation.not_empty', {label: options.label}) }}'
+                   {% endif %}
+            />
+        {% endfilter %}
+
+        <label for="{{ id }}" class="input-group-addon bg-custom b-0 text-white"><i class="icon-calender"></i></label>
+    </div>
+    {% if options.help %}
+        <span class="help-block"><small>{{ options.help|nl2br }}</small></span>
+    {% endif %}
+{% endblock %}

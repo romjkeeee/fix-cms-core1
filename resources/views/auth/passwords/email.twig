@@ -1,0 +1,35 @@
+{% extends 'admin::auth.layout' %}
+
+{% block content %}
+
+    <div class="card-box">
+        <div class="panel-heading">
+            <h3 class="text-center">{{ trans('admin::auth.reset_password') }}</h3>
+        </div>
+        <div class="panel-body">
+            <form method="post" action="{{ route('admin::password_email') }}" role="form" class="text-center m-t-20" id="attributeForm" method="post"
+                  data-bv-message="This value is not valid"
+                  data-bv-feedbackicons="false">
+                {{ csrf_field() }}
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ trans('admin::auth.enter_your_email...')|raw }}
+                </div>
+                <div class="form-group m-b-0 text-left">
+                    <input type="email" name="email" required class="form-control" id="email"
+                            value="{{ old('email') }}"
+                            placeholder="{{ trans('admin::auth.enter_email_lbl') }}"
+                            data-bv-emailaddress="true"
+                            data-bv-emailaddress-message="{{ trans('admin::auth.enter_email_err_wr') }}"
+                            data-bv-notempty-message='{{ trans('admin::auth.enter_email_err') }}'>
+                </div>
+                <div class="form-group text-center m-t-40">
+                    <div class="col-md-12 reset">
+                        <button class="btn btn-default btn-block text-uppercase waves-effect waves-light" type="submit">{{ trans('admin::auth.reset_btn') }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

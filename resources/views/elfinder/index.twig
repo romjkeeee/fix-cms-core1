@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>elFinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+
+    <!-- Section CSS -->
+    <!-- jQuery UI (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+
+    <!-- elFinder CSS (REQUIRED) -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/admin/plugins/elfinder/css/elfinder.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/admin/plugins/elfinder/css/theme.css') }}">
+
+    <!-- Section JavaScript -->
+    <!-- jQuery and jQuery UI (REQUIRED) -->
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <![endif]-->
+    <!--[if gte IE 9]><!-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<![endif]-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- elFinder JS (REQUIRED) -->
+    <script src="{{ asset('vendor/admin/plugins/elfinder/js/elfinder.min.js') }}"></script>
+
+    <!-- elFinder initialization (REQUIRED) -->
+    <script type="text/javascript" charset="utf-8">
+        var cms = parent.CMS;
+        var locale = cms.locale();
+        var language = locale.substr(0,2);
+        var start = function(lng) {
+            // Documentation for client options:
+            // https://github.com/Studio-42/elFinder/wiki/Client-configuration-options
+            $(function() {
+                $('#elfinder').elfinder({
+                    // Disable CSS auto loading
+                    cssAutoLoad : false,
+                    url : {{ route('admin::elfinder_connector')|json_encode|raw }},
+                    soundPath: {{ asset('vendor/admin/plugins/elfinder/sounds')|json_encode|raw }},
+                    lang: lng,
+                    customData: {
+                        _token: cms.csrfToken()
+                    },
+                    getFileCallback: function(file, fm) {
+                        // pass selected file data to TinyMCE
+                        parent.tinymce.activeEditor.windowManager.getParams().oninsert(file, fm);
+                        // close popup window
+                        parent.tinymce.activeEditor.windowManager.close();
+                    }
+                }, function(fm, extraObj) {
+                    // Optional for set document.title dynamically.
+                    var title = document.title;
+                    fm.bind('open', function() {
+                        var path = '',
+                            cwd  = fm.cwd();
+                        if (cwd) {
+                            path = fm.path(cwd.hash) || null;
+                        }
+                        document.title = path? path + ':' + title : title;
+                    }).bind('destroy', function() {
+                        document.title = title;
+                    });
+                });
+            });
+        };
+        if (language != 'en') {
+            var req = $.ajax({
+                url: '/vendor/admin/plugins/elfinder/js/i18n/elfinder.' + language + '.js',
+                cache: true,
+                dataType: 'script'
+            });
+            req.done(function () {
+                start(language);
+            });
+            req.fail(function () {
+                start('en');
+            });
+        } else {
+            start(language);
+        }
+
+    </script>
+</head>
+<body>
+
+<!-- Element where elFinder will be created (REQUIRED) -->
+<div id="elfinder"></div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<div class="card-box article-list-kw">
+    <form role="form" class="form-horizontal ent-filter">
+        <input type="hidden" class="js-sort" name="sort" value="{{ filter.sort }}" />
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+                {% block main %}
+                    {% include 'admin::inc.filter_q' %}
+                {% endblock %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2 col-md-2 col-lg-2"></div>
+            <div class="col-sm-10 col-md-10 col-lg-10 save-inf">
+                {% block btn %}
+                    <button type="submit" class="btn btn-default waves-effect waves-light">
+                        <i class="fa fa-check">&nbsp;&nbsp;</i>{{ trans('admin::common.apply') }}
+                    </button>
+                    <button type="reset" class="btn btn-default waves-effect waves-light">
+                        <i class="fa fa-retweet">&nbsp;&nbsp;</i>{{ trans('admin::common.reset') }}
+                    </button>
+                {% endblock %}
+            </div>
+        </div>
+    </form>
+</div>
+

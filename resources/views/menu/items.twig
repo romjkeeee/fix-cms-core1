@@ -1,0 +1,163 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    {% embed 'admin::emb.top_btn' %}
+        {% block main %}
+            <a href="{{ route('admin::menu_edititem',{'id': parentMenu.id}) }}" class="btn btn-default waves-effect waves-light"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>{{ trans('admin::menu.item_add') }}</a>
+        {% endblock %}
+    {% endembed %}
+
+    <div class="col-sm-12" style="display:none;">
+        <div class="col-md-6">
+            <div class="custom-dd dd" id="nestable_list_1"></div>
+        </div>
+        <div class="col-md-6" style="display:none;">
+            <div class="custom-dd dd" id="nestable_list_2"></div>
+        </div>
+    </div>
+
+    {% macro render_items(items, parentMenu) %}
+        {% import _self as m %}
+        <ol class="dd-list">
+            {% for item in items %}
+                <li class="dd-item dd3-item" data-id="{{ item.id }}">
+                    <div class="dd-handle dd3-handle"></div>
+                    <div class="dd3-content">
+                        <div class="checkbox checkbox-custom menu-check-list">
+                            <input type="checkbox" value="{{ item.id }}">
+                            <label></label>
+                        </div>
+                        <a href="{{ item.url }}" target="_blank">{{ item.trans('name') }}</a>
+                        <span class="list-icons">
+                            <a href="{{ route('admin::menu_edititem', {'id': parentMenu.id, 'id2': item.id}) }}"><i class="fa fa-pencil"></i></a>
+                            <a href="{{ route('admin::menu_deleteitem', {'id': item.id}) }}"><i class="fa fa-trash-o"></i></a>
+                        </span>
+                    </div>
+                    {% if not item.child is empty %}
+                        {{ m.render_items(item.child, parentMenu) }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endmacro %}
+    {% import _self as m %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box rus-menu">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% if items|length %}
+                        <div class="custom-dd-empty dd" id="nestable_list_3">
+                            {{ m.render_items(items, parentMenu) }}
+                        </div>
+                        {% else %}
+                            {{ trans('admin::common.empty') }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if items|length %}
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <button type="button" class="btn btn-default waves-effect waves-light delete-categ-btn" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-trash-o">&nbsp;&nbsp;</i>{{ trans('admin::common.delete') }}</button>
+            </div>
+        </div>
+        {% include 'admin::inc.listmodal' %}
+    {% endif %}
+
+{% endblock %}
+
+{% block styles %}
+    <link href="{{ asset('vendor/admin/plugins/nestable/jquery.nestable.css') }}" rel="stylesheet" />
+{% endblock %}
+{% block scripts %}
+	<script src="{{ asset('vendor/admin/plugins/nestable/jquery.nestable.js') }}"></script>
+    <script src="{{ asset('vendor/admin/pages/nestable.js') }}"></script>
+	<script>
+        $(".delete-categ-btn").prop('disabled', true);
+        // Если ни один чекбокс не выбран, то кнопка не активна
+        $('input[type=checkbox]').click(function () {
+            if ($('input[type=checkbox]').is(':checked')) {
+                $(".delete-categ-btn").prop('disabled', false);
+            } else {
+                $(".delete-categ-btn").prop('disabled', true);
+            }
+        });
+        // подсчет кол-ва активных чекбоксов для вывода определенной строки в модальном окне
+        var countChecked = function () {
+            var n = $('input[type=checkbox]:checked').length;
+            if (n <= 1) {
+                $('.only-one-el').show();
+                $('.group-el').hide();
+            } else {
+                $('.only-one-el').hide();
+                $('.group-el').show();
+            }
+        };
+        countChecked();
+        $('input[type=checkbox]').on('click', countChecked);
+	</script>
+
+	<script type="text/javascript">
+    $(function() {
+    	var defaultData = [];
+		$('ol.dd-list li').each(function(index) {
+            var parent = $(this).parent('ol').parent('li').attr('data-id');
+            parent = parent ? parent : 0;
+            if (defaultData[parent]) {
+                defaultData[parent].push($(this).attr('data-id'));
+            } else {
+                defaultData[parent] = [];
+                defaultData[parent].push($(this).attr('data-id'));
+            }
+		});
+        $('[id^=nestable_list]').on('change', function() {
+            var data = [];
+            $('ol.dd-list li').each(function(index) {
+                var parent = $(this).parent('ol').parent('li').attr('data-id');
+                parent = parent ? parent : 0;
+                if (data[parent]) {
+                    data[parent].push($(this).attr('data-id'));
+                } else {
+                    data[parent] = [];
+                    data[parent].push($(this).attr('data-id'));
+                }
+            });
+
+            if (JSON.stringify(data) === JSON.stringify(defaultData)) return;
+			defaultData = data;
+
+			var url = {{ route('admin::menu_sortitems')|json_encode|raw }};
+            var req = CMS.ajaxPost(url, {data: data});
+            req.done(function (msg) {
+                var msg = {{ trans('admin::common.save_sort')|json_encode|raw }};
+                CMS.notify('success', msg)
+            });
+            req.fail(function (jqXHR, textStatus) {
+                var msg = {{ trans('admin::common.sort_error')|json_encode|raw }};
+                CMS.notify('error', msg);
+            });
+        });
+        $('.modal button.delete-yes').on('click', function() {
+            var data = [];
+            $('ol.dd-list li input:checked').each(function(index) {
+                data.push($(this).val());
+            });
+
+            var url = {{ route('admin::menu_massitemdelete')|json_encode|raw }};
+            var req = CMS.ajaxPost(url, {data: data});
+            req.done(function (msg) {
+                location.reload();
+            });
+            req.fail(function (jqXHR, textStatus) {
+                var msg = {{ trans('admin::common.sort_error')|json_encode|raw }};
+                CMS.notify('error', msg)
+            });
+        })
+    });
+</script>
+{% endblock %}

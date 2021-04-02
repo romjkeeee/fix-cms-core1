@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'ms_email_templates' => 'Email templates',
+    'ps_email_templates' => 'Email templates',
+    'p_email_template_list' => 'Email templates list',
+    'p_email_template_edit' => 'Add \ edit templates',
+    'p_email_template_delete' => 'Deleting templates',
+    
+    'title' => 'Email templates list',
+    'add' => 'Add template',
+    'edit' => 'Edit template',
+    'saved' => 'Template saved',
+    'from' => 'From',
+    'to' => 'To',
+    'subject' => 'Subject',
+    'body' => 'Message',
+    'legend' => 'Legend',
+    'layout' => 'Use layout (header, footer)?',
+    'html' => 'Use HTML?',
+    'modified' => 'Modified',
+    'name' => 'Name',
+    'name_help' => 'for template ident',
+    'desc' => 'Description',
+    'publish' => 'Publish',
+    'noreply' => 'No replay Email',
+    'admin_email' => 'Admin Email',
+    'to_admin' => 'Copy to administrator',
+    'to_admin_description' => 'A copy of the site administrator is sent.',
+    'to_d_admin' => 'Copy to add. administrators',
+    'to_d_admin_description' => 'A copy is sent to additional administrators',
+];

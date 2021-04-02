@@ -1,0 +1,68 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs">
+
+                {% for section in seo.getSections %}
+                    <li class="tab{{ loop.first ? ' active' : '' }}">
+                        <a href="#section-{{ loop.index }}" data-toggle="tab" aria-expanded="{{ loop.first ? 'true' : 'false' }}">
+                            <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
+                            <span class="hidden-xs">{{ trans(section.getDescription) }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+
+            </ul>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <form id="attributeForm" method="post" class="form-horizontal"
+                              data-bv-message="This value is not valid"
+                              data-bv-feedbackicons="false">
+                            {{ csrf_field() }}
+                            <div class="tab-content">
+
+                                {% for section in seo.getSections %}
+                                    <div class="tab-pane{{ loop.first ? ' active' : '' }}" id="section-{{ loop.index }}">
+
+                                        {% for locale, locale_title in config('app.locales') %}
+                                            {% set form = forms[section.getName][locale] %}
+                                            <fieldset>
+                                                <legend>{{ locale_title }}</legend>
+
+                                                {% for field in form %}
+                                                    {{ form_field(form, field.getName) }}
+                                                {% endfor %}
+                                            </fieldset>
+                                        {% endfor %}
+
+                                    </div>
+                                {% endfor %}
+
+                                <div class="row">
+                                    <div class="col-sm-2 col-md-2 col-lg-2"></div>
+                                    <div class="col-sm-10 col-md-10 col-lg-10 save-inf">
+                                        {% include 'admin::inc.buttonsubmit' %}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            $('#attributeForm').bootstrapValidator();
+        });
+    </script>
+{% endblock %}

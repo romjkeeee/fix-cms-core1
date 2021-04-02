@@ -1,0 +1,74 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box table-responsive">
+
+                {% for section in sections %}
+
+                    <h4 class="header-title {% if not loop.first %}m-t-20{% endif %}"><b>{{ trans(section.name) }}</b></h4>
+                    <table id="datatable-permission" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>{{ trans('admin::user.acl_permission_role') }}</th>
+                            {% for role in roles %}
+                                <th>{{ role.name }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for permission in section.permissions %}
+                            <tr>
+                                <td>{{ trans(permission.description) }}</td>
+                                {% for role in roles %}
+                                    <td>
+                                        <div class="checkbox checkbox-custom">
+                                            <input type="checkbox" data-role="{{ role.id }}" data-permission="{{ permission.id }}"{{ role.permissions.find(permission.id) ? ' checked' : '' }}>
+                                            <label></label>
+                                        </div>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-sm-2 col-md-2 col-lg-2"></div>
+                    <div class="col-sm-10 col-md-10 col-lg-10 save-inf">
+                        <button type="button" class="btn btn-default waves-effect waves-light"><i class="fa fa-save">&nbsp;&nbsp;</i>{{ trans('admin::common.save') }}</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+        $('.content button').on('click', function() {
+            var data = [];
+            $('tbody tr td div.checkbox input:checked').each(function(index) {
+                if (! data[$(this).attr('data-role')]) data[$(this).attr('data-role')] = [];
+                data[$(this).attr('data-role')].push($(this).attr('data-permission'));
+            });
+
+            var url = {{ route('admin::user_acl')|json_encode|raw }};
+            var req = CMS.ajaxPost(url, {data: data});
+            req.done(function (msg) {
+                var msg = {{ trans('admin::common.save_page')|json_encode|raw }};
+                CMS.notify('success', msg);
+            });
+            req.fail(function (jqXHR, textStatus) {
+                var msg = {{ trans('admin::common.sort_error')|json_encode|raw }};
+                CMS.notify('error', msg);
+            });
+        });
+    });
+</script>
+{% endblock %}

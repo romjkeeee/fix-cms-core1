@@ -1,0 +1,88 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    {% embed 'admin::emb.top_btn' %}
+        {% block main %}
+
+            {% if can('permission', 'menu.edit') %}
+                <a href="{{ route('admin::menu_edit') }}" class="btn btn-default waves-effect waves-light"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>{{ trans('admin::menu.add') }}</a>
+            {% endif %}
+
+        {% endblock %}
+    {% endembed %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box table-responsive">
+                {% if menus|length %}
+                <table id="datatable" class="table table-striped table-bordered ent-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <div class="checkbox checkbox-custom">
+                                <input type="checkbox">
+                                <label></label>
+                            </div>
+                        </th>
+                        <th>#</th>
+                        <th>{{ trans('admin::common.action') }}</th>
+                        <th>{{ trans('admin::menu.name') }}</th>
+                        <th>{{ trans('admin::menu.description') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for menu in menus %}
+                        <tr>
+                            <td>
+                                <div class="checkbox checkbox-custom">
+                                    <input type="checkbox" value="{{ menu.id }}">
+                                    <label></label>
+                                </div>
+                            </td>
+                            <td>{{ menu.id }}</td>
+                            <td class="text-nowrap">
+                                {% if can('permission', 'menu.edit') %}
+                                    <a href="{{ route('admin::menu_edit', {id: menu.id}) }}" data-toggle="tooltip" title="{{ trans('admin::common.tt_edit') }}"><i class="fa fa-pencil"></i></a>
+                                {% endif %}
+
+                                {% if can('permission', 'menuitem.list') %}
+                                    <a href="{{ route('admin::menu_items', {id: menu.id}) }}" data-toggle="tooltip" title="{{ trans('admin::menu.items', {menu: menu.name}) }}"><i class="fa fa-list-ul"></i></a>
+                                {% endif %}
+
+                                {% if can('permission', 'menu.delete') %}
+                                    <a href="#" data-action="delete" data-toggle="tooltip" title="{{ trans('admin::common.tt_delete') }}"><i class="fa fa-trash-o"></i></a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if can('permission', 'menu.edit') %}
+                                    <a href="{{ route('admin::menu_items', {'id': menu.id}) }}" class="name-link">{{ menu.name }}</a>
+                                {% else %}
+                                    {{ menu.name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ menu.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    {{ trans('admin::common.empty') }}
+                {% endif %}
+
+                {% include 'admin::inc.pagination' with {paginator: menus} %}
+            </div>
+        </div>
+
+        {% if menus|length %}
+            {% embed 'admin::emb.group_action' with {url: route('admin::menu_action')} %}
+                {% block menu %}
+                    {% if can('permission', 'menu.delete') %}
+                        <li><a href="#" data-action="delete"><i class="fa fa-trash-o">&nbsp;&nbsp;</i>{{ trans('admin::common.delete') }}</a></li>
+                    {% endif %}
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+
+    </div>
+
+{% endblock %}

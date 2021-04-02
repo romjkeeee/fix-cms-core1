@@ -1,0 +1,78 @@
+{% macro row(entry) %}
+    <div class="row">
+        {% if entry.type == 'plain' %}
+
+            <div class="col-md-12">
+                <p class="small">{{ entry.content }}</p>
+            </div>
+
+        {% elseif entry.type == 'monolog' %}
+
+            <div class="col-md-10">
+                <mark class="small">{{ entry.content.date|date('Y-m-d H:i:s') }}</mark>
+                {% if entry.content.level == 'DEBUG' %}
+                    <span class="small text-muted">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'INFO' %}
+                    <span class="small text-info">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'NOTICE' %}
+                    <span class="small text-info">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'WARNING' %}
+                    <span class="small text-warning">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'ERROR' %}
+                    <span class="small text-danger">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'CRITICAL' %}
+                    <span class="small text-pink">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'ALERT' %}
+                    <span class="small text-pink">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'EMERGENCY' %}
+                    <span class="small text-purple">{{ entry.content.message }}</span>
+                {% endif %}
+            </div>
+            <div class="col-md-2">
+                <span class="label label-default">{{ entry.content.logger }}</span>
+                <span class="label label-default">{{ entry.content.level|lower }}</span>
+            </div>
+
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro row_table(entry) %}
+    <table width="100%">
+        <tr>
+        {% if entry.type == 'plain' %}
+
+            <td colspan="2">
+                <span class="small">{{ entry.content }}</span>
+            </td>
+
+        {% elseif entry.type == 'monolog' %}
+
+            <td>
+                <mark class="small">{{ entry.content.date|date('Y-m-d H:i:s') }}</mark>
+                {% if entry.content.level == 'DEBUG' %}
+                    <span class="small text-muted">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'INFO' %}
+                    <span class="small text-info">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'NOTICE' %}
+                    <span class="small text-info">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'WARNING' %}
+                    <span class="small text-warning">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'ERROR' %}
+                    <span class="small text-danger">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'CRITICAL' %}
+                    <span class="small text-pink">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'ALERT' %}
+                    <span class="small text-pink">{{ entry.content.message }}</span>
+                {% elseif entry.content.level == 'EMERGENCY' %}
+                    <span class="small text-purple">{{ entry.content.message }}</span>
+                {% endif %}
+            </td>
+            <td nowrap width="1%">
+                <span class="label label-default" data-toggle="tooltip" title="{{ entry.content.logger }}">{{ entry.content.level|lower }}</span>
+            </td>
+
+        {% endif %}
+        </tr>
+    </table>
+{% endmacro %}

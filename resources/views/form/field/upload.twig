@@ -1,0 +1,32 @@
+{% extends 'admin::form.field._layout' %}
+{% block input %}
+    {% if not readonly %}
+        {% filter html_inline %}
+            <input type="file" class="filestyle" data-buttontext="" id="{{ id }}" name="{{ name }}"
+                   data-placeholder="{{ trans('admin::form.file.placeholder') }}"
+
+                    {% if required %}
+                        required="required"
+                        data-bv-notempty="true"
+                        data-bv-notempty-message='{{ trans('admin::form.validation.not_empty', {label: options.label}) }}'
+                    {% endif %}
+            />
+        {% endfilter %}
+
+        {% if options.help %}
+            <span class="help-block"><small>{{ options.help|nl2br }}</small></span>
+        {% endif %}
+    {% endif %}
+
+    {% if value %}
+        <div>
+            <a href="{{ file }}" target="_blank">{{ trans('admin::form.file.download') }}</a>
+        </div>
+        {% if not required and empty %}
+            <div class="checkbox">
+                <input id="{{ id }}_del" type="checkbox" name="{{ name_delete }}" value="1" />
+                <label for="{{ id }}_del">{{ trans('admin::form.file.delete') }}</label>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

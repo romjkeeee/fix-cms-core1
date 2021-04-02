@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-sm-6">
+        <div class="dataTables_info" id="datatable_info" role="status" aria-live="polite">{{ trans('admin::pagination.show_from') }} {{ presenter.from() }} {{ trans('admin::pagination.show_to') }} {{ presenter.to() }} {{ trans('admin::pagination.show_in') }} {{ presenter.total() }} {{ trans('admin::pagination.items') }}</div>
+    </div>
+    <div class="col-sm-6">
+        <div class="dataTables_paginate paging_simple_numbers">
+            <ul class="pagination">
+
+                {% if presenter.hasPreviousButton() %}
+                    <li class="previous"><a href="{{ presenter.relUrl(-1) }}">{{ trans('admin::pagination.previous') }}</a></li>
+                {% else %}
+                    <li class="previous disabled"><a href="javascript:void(0);">{{ trans('admin::pagination.previous') }}</a></li>
+                {% endif %}
+
+                {% if presenter.hasFirstLinks() %}
+                    {% for page,link in presenter.getFirstLinks() %}
+                        <li class="{% if presenter.isActive(page) %}active{% endif %}">
+                            <a href="{{ link }}">{{ page }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+
+                {% if presenter.hasSliderLinks() %}
+                    <li class="disabled"><span>...</span></li>
+                    {% for page,link in presenter.getSliderLinks() %}
+                        <li class="{% if presenter.isActive(page) %}active{% endif %}">
+                            <a href="{{ link }}">{{ page }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+
+                {% if presenter.hasLastLinks() %}
+                    <li class="disabled"><span>...</span></li>
+                    {% for page,link in presenter.getLastLinks() %}
+                        <li class="{% if presenter.isActive(page) %}active{% endif %}">
+                            <a href="{{ link }}">{{ page }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+
+                {% if presenter.hasNextButton() %}
+                    <li class="next"><a href="{{ presenter.relUrl(1) }}">{{ trans('admin::pagination.next') }}</a></li>
+                {% else %}
+                    <li class="next disabled"><a href="javascript:void(0);">{{ trans('admin::pagination.next') }}</a></li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>

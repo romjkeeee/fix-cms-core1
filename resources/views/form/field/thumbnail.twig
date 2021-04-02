@@ -1,0 +1,23 @@
+{% extends 'admin::form.field._layout' %}
+{% block input %}
+    {% if not readonly %}
+        {% filter html_inline %}
+            <input type="text" class="form-control {{ options.class }}" id="{{ id }}" name="{{ name }}" value="{{ old(name, value) }}"
+                   {% if options.placeholder %}placeholder="{{ options.placeholder }}"{% endif %}
+
+                    {% if required %}
+                        data-bv-notempty="true"
+                        data-bv-notempty-message='{{ trans('admin::form.validation.not_empty', {label: options.label}) }}'
+                    {% endif %}
+            />
+        {% endfilter %}
+
+        {% if options.help %}
+            <span class="help-block"><small>{{ options.help|nl2br }}</small></span>
+        {% endif %}
+    {% endif %}
+
+    {% if value %}
+        <img class="m-t-5 img-thumbnail" src="{{ value }}">
+    {% endif %}
+{% endblock %}

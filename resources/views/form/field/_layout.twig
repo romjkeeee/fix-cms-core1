@@ -1,0 +1,11 @@
+<div class="form-group">
+    {% filter html_inline %}
+        <label class="control-label {{ config('admin.field_head_grid') }}" for="{{ id }}">
+            {{ options.label }}
+            {% if required %}<span class="please-fill">*</span>{% endif %}
+        </label>
+    {% endfilter %}
+    <div class="{{ config('admin.field_body_grid') }}">
+        {% block input %}{% endblock %}
+    </div>
+</div>

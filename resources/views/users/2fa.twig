@@ -1,0 +1,27 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    <div class="card-box">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+
+                <form method="post" action="{{ route('admin::user_2fa', {id: user.id}) }}">
+                    {{ csrf_field() }}
+                    {% if enabled %}
+                        <p>{{ trans('admin::user.2fa_scan') }}</p>
+                        <img alt="Image of QR barcode" src="{{ image }}" />
+                        <p>{{ trans('admin::user.2fa_manual') }} <code>{{ secret }}</code></p>
+
+                        <br/>
+                        <button class="btn btn-default" type="submit" name="action" value="disable">{{ trans('admin::user.2fa_disable_btn') }}</button>
+                    {% else %}
+                        <p>{{ trans('admin::user.2fa_disabled') }}</p>
+                        <br/>
+                        <button class="btn btn-default" type="submit" name="action" value="enable">{{ trans('admin::user.2fa_enable_btn') }}</button>
+                    {% endif %}
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            {% if template.isMultilingual() %}
+                <ul class="nav nav-tabs">
+                    {% for locale, locale_title in config('app.locales') %}
+                        <li class="tab {% if config('app.locale') == locale %}active{% endif %}">
+                            <a href="#tab-{{ locale }}" data-toggle="tab" aria-expanded="false">
+                                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                                <span class="hidden-xs">{{ locale_title }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        {{ form_open(form, {id: 'accountForm'}) }}
+                        {{ form_field(form, 'id') }}
+
+                        {% if template.isMultilingual() %}
+
+                            <div class="tab-content">
+                                {% for locale, _ in config('app.locales') %}
+                                    {% set locale_active = config('app.locale') == locale %}
+                                    <div class="tab-pane {% if locale_active %}active{% endif %}" id="tab-{{ locale }}">
+
+                                        {% if locale_active %}
+                                            {{ form_field(form, 'name') }}
+                                            {{ form_field(form, 'desc') }}
+                                            {{ form_field(form, 'from') }}
+                                            {{ form_field(form, 'to') }}
+                                            {{ form_field(form, 'to_admin') }}
+                                            {{ form_field(form, 'to_d_admin') }}
+                                        {% endif %}
+                                        {{ form_field(form, 'subject_'~locale) }}
+                                        {{ form_field(form, 'body_'~locale) }}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="legend">{{ trans('admin::email_template.legend') }}</label>
+                                            <div class="col-sm-10 legends">
+                                                {% for name, title in template.legend %}
+                                                    <a href="#">[%{{ name|upper }}%]</a> - {{ title }}<br/>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% if locale_active %}
+                                            {{ form_field(form, 'html') }}
+                                            {{ form_field(form, 'layout') }}
+                                        {% endif %}
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        {% else %}
+
+                            {{ form_field(form, 'name') }}
+                            {{ form_field(form, 'desc') }}
+                            {{ form_field(form, 'from') }}
+                            {{ form_field(form, 'to') }}
+                            {{ form_field(form, 'to_admin') }}
+                            {{ form_field(form, 'to_d_admin') }}
+                            {{ form_field(form, 'subject') }}
+                            {{ form_field(form, 'body') }}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="legend">{{ trans('admin::email_template.legend') }}</label>
+                                <div class="col-sm-10 legends">
+                                    {% for name, title in template.legend %}
+                                        <a href="#">[%{{ name|upper }}%]</a> - {{ title }}<br/>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {{ form_field(form, 'html') }}
+                            {{ form_field(form, 'layout') }}
+
+                        {% endif %}
+
+                        {{ form_submit(form) }}
+                        {{ form_close(form) }}
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    jQuery.fn.extend({
+        insertAtCaret: function (myValue) {
+            return this.each(function () {
+                if (document.selection) {
+                    //For browsers like Internet Explorer
+                    this.focus();
+                    var sel = document.selection.createRange();
+                    sel.text = myValue;
+                    this.focus();
+                }
+                else if (this.selectionStart || this.selectionStart == '0') {
+                    //For browsers like Firefox and Webkit based
+                    var startPos = this.selectionStart;
+                    var endPos = this.selectionEnd;
+                    var scrollTop = this.scrollTop;
+                    this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos, this.value.length);
+                    this.focus();
+                    this.selectionStart = startPos + myValue.length;
+                    this.selectionEnd = startPos + myValue.length;
+                    this.scrollTop = scrollTop;
+                } else {
+                    this.value += myValue;
+                    this.focus();
+                }
+            });
+        }
+    });
+
+    /*
+    function mceAdd(text) {
+        $(':input[name="body"]').insertAtCaret(text);
+    }
+    */
+
+    $(document).ready(function() {
+        var $form = $('#accountForm');
+
+        $form.on('focus', 'input[type=text], textarea', function() {
+            $form.find(':input[data-focus]').removeAttr('data-focus');
+            $(this).attr('data-focus', true);
+        });
+
+        $('.legends a').on('click', function(e) {
+            e.preventDefault();
+
+            var legendValue = $(this).text();
+            var $currentInput = $form.find(':input[data-focus]');
+            $currentInput.insertAtCaret(legendValue);
+        })
+    });
+
+</script>
+{% endblock %}

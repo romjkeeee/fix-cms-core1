@@ -1,0 +1,21 @@
+{% filter html_inline %}
+<form class="form-horizontal cms-form" id="{{ id }}"
+
+    {% if options.method %}
+    method="{{ options.method }}"
+    {% endif %}
+
+    {% if options.action %}
+    action="{{ options.action }}"
+    {% endif %}
+
+    {% if options.enctype %}
+    enctype="{{ options.enctype }}"
+    {% endif %}
+
+    data-bv-message="This value is not valid"
+    data-bv-feedbackicons="false">
+
+{% endfilter %}
+
+    {{ csrf_field() }}

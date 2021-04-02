@@ -1,0 +1,56 @@
+{% extends 'admin::auth.layout' %}
+
+{% block content %}
+
+    <div class="card-box">
+        <div class="panel-heading">
+            <h3 class="text-center">{{ trans('admin::auth.reset_password') }}</h3>
+        </div>
+
+        <div class="panel-body">
+
+            <form method="post" action="{{ route('admin::password_reset') }}" role="form" class="form-horizontal m-t-20" id="attributeForm" method="post"
+                  data-bv-message="This value is not valid"
+                  data-bv-feedbackicons="false">
+                {{ csrf_field() }}
+
+                <input type="hidden" name="token" value="{{ token }}">
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <input type="email" name="email" required class="form-control" id="email"
+                               value="{{ email|default(old('email')) }}"
+                               placeholder="{{ trans('admin::auth.enter_email_lbl') }}"
+                               data-bv-emailaddress="true"
+                               data-bv-emailaddress-message="{{ trans('admin::auth.enter_email_err_wr') }}"
+                               data-bv-notempty-message='{{ trans('admin::auth.enter_email_err') }}'>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <input type="password" name="password" required class="form-control" id="password"
+                               placeholder="{{ trans('admin::auth.password_lbl') }}"
+                               data-bv-notempty-message='{{ trans('admin::auth.password_err') }}'>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <input type="password" name="password_confirmation" required class="form-control" id="password_confirmation"
+                               placeholder="{{ trans('admin::auth.password_confirmation_lbl') }}"
+                               data-bv-notempty-message='{{ trans('admin::auth.password_confirmation_err') }}'>
+                    </div>
+                </div>
+
+                <div class="form-group text-center m-t-40">
+                    <div class="col-md-12 reset">
+                        <button class="btn btn-default btn-block text-uppercase waves-effect waves-light" type="submit">{{ trans('admin::auth.reset_btn') }}</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

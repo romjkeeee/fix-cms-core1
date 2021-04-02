@@ -1,0 +1,20 @@
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="mySmallModalLabel">{{ trans('admin::common.confirm') }}</h4>
+            </div>
+            <div class="modal-body">
+                <span class="only-one-el">{{ trans('admin::common.delete_question') }}</span>
+                <span class="group-el">{{ trans('admin::common.delete_group_question') }}</span>
+            </div>
+            <button type="button" class="btn btn-danger waves-effect waves-light delete-yes" data-href="{{ href }}">
+                {{ trans('admin::common.yes') }}
+            </button>
+            <span class="close close-popup" data-dismiss="modal" aria-hidden="true">
+                <button type="button" class="btn btn-white waves-effect delete-no">{{ trans('admin::common.no') }}</button>
+            </span>
+        </div>
+    </div>
+</div>

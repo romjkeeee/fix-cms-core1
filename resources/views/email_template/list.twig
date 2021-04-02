@@ -1,0 +1,40 @@
+{% extends "admin::layout" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box table-responsive table-article-list">
+
+                {% if not emailTemplates is empty %}
+                    <table id="datatable" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{{ trans('admin::common.action') }}</th>
+                            <th>{{ trans('admin::email_template.name') }}</th>
+                            <th>{{ trans('admin::email_template.desc') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for template in emailTemplates %}
+                            <tr>
+                                <td>{{ template.id }}</td>
+                                <td>
+                                    <a href="{{ route('admin::email_template_edit', {'id': template.id}) }}"><i class="fa fa-pencil"></i></a>
+                                </td>
+                                <td><a href="{{ route('admin::email_template_edit', {'id': template.id}) }}" class="name-link">{{ template.name }}</a></td>
+                                <td>{{ template.desc }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    {{ trans('admin::common.empty') }}
+                {% endif %}
+
+                {% include 'admin::inc.pagination'  with {'paginator': emailTemplates} %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

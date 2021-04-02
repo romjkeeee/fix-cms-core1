@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ trans(layout.title) }} — {{ config('admin.site_name') }}</title>
+
+        {% set _ver = '?v=012' %}
+
+        {% include 'admin::inc.favicon' %}
+
+        <!-- selects, field:select -->
+        <link href="{{ asset('vendor/admin/plugins/multiselect/css/multi-select.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/plugins/select2/select2.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" rel="stylesheet" />
+
+        <link href="{{ asset('vendor/admin/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/css/core.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/css/cms.css') }}{{ _ver }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/css/components.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/css/icons.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/css/pages.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('vendor/admin/css/responsive.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- date picker, field:date, note: !mod -->
+        <link href="{{ asset('vendor/admin/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
+        <!-- datetime picker, field:datetime-->
+        <link href="{{ asset('vendor/admin/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+
+        {% block styles %}{% endblock %}
+
+        <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="{{ asset('vendor/admin/js/modernizr.min.js') }}"></script>
+    </head>
+	<body class="fixed-left">
+		<div id="wrapper">
+
+            {% include 'admin::inc.nav' %}
+
+            <div class="content-page">
+                <div class="content">
+                    <div class="container">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h4 class="page-title">{{ layout.title }}</h4>
+                                <ol class="breadcrumb">
+                                    <li>
+                                        <a href="{{ route('admin::index') }}">{{ trans('admin::common.main') }}</a>
+                                    </li>
+                                    {% for item in layout.breadcrumbs %}
+                                        <li>
+                                            <a href="{{ item.getUrl() }}">{{ item.getDescription() }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    <li class="active">
+                                        {{ layout.title }}
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        {% include 'admin::inc.errors' %}
+                        {% set included_errors = true %}
+
+                        {% block content %}{% endblock %}
+
+                    </div>
+                </div>
+
+                {% if config('admin.show_footer') %}
+                    <footer class="footer">
+                        {{ trans('admin::common.copy', {year: 'now'|date('Y')}) }}
+                        {% if can('permission', 'debug') %}
+                            <span class="pull-right">PHP: {{ constant('PHP_VERSION') }} | Laravel: {{ constant('Illuminate\\Foundation\\Application::VERSION') }} </span>
+                        {% endif %}
+                    </footer>
+                {% endif %}
+            </div>
+
+		</div>
+
+        <!-- these files are used at core of the theme -->
+        <script src="{{ asset('vendor/admin/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/jquery.nicescroll.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/jquery.slimscroll.js') }}"></script>
+
+        <!-- ??? -->
+        <script src="{{ asset('vendor/admin/js/detect.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/fastclick.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/jquery.blockUI.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/waves.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/wow.min.js') }}"></script>
+        <script src="{{ asset('vendor/admin/js/jquery.scrollTo.min.js') }}"></script>
+
+        <!-- this is a main js file. it contains the custom js code needed for features including layout, sidebar, etc. -->
+        <script>
+            var resizefunc = [];
+        </script>
+        <script src="{{ asset('vendor/admin/js/jquery.app.js') }}"></script>
+        <!-- this file contains the definition of some of the key components -->
+        <script src="{{ asset('vendor/admin/js/jquery.core.js') }}"></script>
+
+        <!-- notification -->
+        <script src="{{ asset('vendor/admin/plugins/notifyjs/dist/notify.min.js') }}"></script>
+        <script src="{{ asset('vendor/admin/plugins/notifications/notify-metro.js') }}"></script>
+
+        <!-- @new_version remove -->
+        <script src="{{ asset('vendor/admin/js/bootstrap-confirmation.min.js') }}" ></script>
+        <script src="{{ asset('vendor/admin/js/cms.js') }}{{ _ver }}"></script>
+        {% set locale = config('app.locale') %}
+        {% autoescape false %}
+            <script>
+                CMS.setLocale({{ locale|json_encode }});
+                CMS.setL10n({{ trans('admin::js')|json_encode }});
+                CMS.setCsrfToken({{ csrf_token()|json_encode }});
+                CMS.setRoutes({
+                    elfinder: {{ route('admin::elfinder')|json_encode }}
+                });
+                CMS.showNotify({{ layout.notify.getAll|json_encode }});
+            </script>
+        {% endautoescape %}
+
+        <!-- old cms scripts  -->
+        <script src="{{ asset('vendor/admin/js/script.js') }}{{ _ver }}"></script>
+
+        <!-- form validation -->
+        <script src="{{ asset('vendor/admin/plugins/bootstrapvalidator/dist/js/bootstrapValidator.js') }}"></script>
+        <!-- cute selects, field:select -->
+        <script src="{{ asset('vendor/admin/plugins/select2/select2.min.js') }}"></script>
+        <!-- cute files, field:image,upload -->
+        <script src="{{ asset('vendor/admin/plugins/bootstrap-filestyle/src/bootstrap-filestyle.min.js') }}"></script>
+        <!-- wysiwyg editor, field:wysiwyg -->
+        <script src="{{ asset('vendor/admin/plugins/tinymce/tinymce.min.js') }}"></script>
+        <!-- datepicker, field:date -->
+        <script src="{{ asset('vendor/admin/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+        {% if locale != 'en' %}
+            <script src="{{ asset('vendor/admin/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.'~locale~'.min.js') }}"></script>
+        {% endif %}
+        <!-- datetime picker, field:datetime-->
+        <script src="{{ asset('vendor/admin/plugins/momentjs/js/moment.min.js') }}"></script>
+        {% if locale != 'en' %}
+            <script src="{{ asset('vendor/admin/plugins/momentjs/js/i18n/'~locale~'.js') }}"></script>
+        {% endif %}
+        <script src="{{ asset('vendor/admin/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
+
+        {% block scripts %}{% endblock %}
+
+	</body>
+</html>

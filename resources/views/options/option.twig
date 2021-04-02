@@ -1,0 +1,43 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs">
+
+                {% for section in option.getSections %}
+                    <li class="tab{{ loop.first ? ' active' : '' }}">
+                        <a href="#tab-{{ loop.index }}" data-toggle="tab" aria-expanded="{{ loop.first ? 'true' : 'false' }}">
+                            <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
+                            <span class="hidden-xs">{{ trans(section.getDescription) }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+
+            </ul>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        {{ form_open(form) }}
+                            <div class="tab-content">
+
+                                {% for section in option.getSections %}
+                                    <div class="tab-pane{{ loop.first ? ' active' : '' }}" id="tab-{{ loop.index }}">
+
+                                        {% set fields = forms[section.getName] %}
+                                        {% for field in fields %}
+                                            {{ form_field(fields, field.getName) }}
+                                        {% endfor %}
+
+                                    </div>
+                                {% endfor %}
+
+                                {{ form_submit(form) }}
+                            </div>
+                        {{ form_close(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

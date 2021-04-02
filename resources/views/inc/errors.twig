@@ -1,0 +1,17 @@
+{% if not included_errors %}
+
+    {% if errors|length > 0 %}
+        <div class="card-box page-err">
+            <div class="row error-list">
+
+                {% for error in errors.all %}
+                    <div class="col-md-12 col-sm-12 col-lg-12 error-item">
+                        <i class="fa fa-times-circle error-marker"></i><span class="error-text">{{ error }}</span>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% endif %}
+
+{% endif %}

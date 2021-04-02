@@ -1,0 +1,18 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+
+	<div class="card-box">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-lg-12">
+                {{ form_open(form) }}
+
+                {{ form_field(form, 'email') }}
+
+                {{ form_submit(form) }}
+                {{ form_close(form) }}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

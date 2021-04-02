@@ -1,0 +1,25 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    <div class="card-box">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+
+                {{ form_open(form) }}
+
+                {{ form_field(form, 'id') }}
+                {{ form_field(form, 'avatar_file') }}
+                {{ form_field(form, 'name') }}
+                {{ form_field(form, 'email') }}
+                {{ form_field(form, 'password') }}
+                {{ form_field(form, 'password_confirmation') }}
+                {{ form_field(form, 'active') }}
+                {{ form_field(form, 'acl_role_id') }}
+
+                {{ form_submit(form) }}
+                {{ form_close(form) }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

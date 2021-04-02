@@ -1,0 +1,125 @@
+{% extends 'admin::layout' %}
+
+{% block content %}
+    {% embed 'admin::emb.top_btn' %}
+        {% block main %}
+
+            {% if can('permission', 'user.edit') %}
+                <a href="{{ route('admin::user_edit') }}" class="btn btn-default waves-effect waves-light"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>{{ trans('admin::user.add') }}</a>
+            {% endif %}
+
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'admin::emb.filter' %}
+        {% block main %}
+            {{ parent() }}
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="status">{{ trans('admin::user.role') }}</label>
+                <div class="col-sm-10">
+                    <select name="role" id="" class="form-control">
+                        <option value="">{{ trans('admin::user.all_roles') }}</option>
+                        {% for rowRole in roles %}
+                            <option value="{{ rowRole.id }}"{{ (rowRole.id == filter.role) ? ' selected' : ''}}>{{ rowRole.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box table-responsive table-users-list">
+                {% if users|length %}
+                <table id="datatable" class="table table-striped table-bordered ent-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <div class="checkbox checkbox-custom">
+                                <input type="checkbox">
+                                <label></label>
+                            </div>
+                        </th>
+                        <th>#</th>
+                        <th>{{ trans('admin::common.action') }}</th>
+                        <th>{{ trans('admin::user.name') }}</th>
+                        <th>{{ trans('admin::user.email') }}</th>
+                        <th>{{ trans('admin::user.role') }}</th>
+                        <th>{{ trans('admin::user.last_login') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in users %}
+                        {% set not_current = item.id != layout.user.id %}
+                        <tr>
+                            <td>
+                                <div class="checkbox checkbox-custom">
+                                    <input type="checkbox" value="{{ item.id }}">
+                                    <label ></label>
+                                </div>
+                            </td>
+                            <td>{{ item.id }}</td>
+                            <td class="text-nowrap">
+                                {% if can('permission', 'user.edit') %}
+                                    <a href="{{ route('admin::user_edit', {id: item.id}) }}" data-toggle="tooltip" title="{{ trans('admin::common.tt_edit') }}"><i class="fa fa-pencil"></i></a>
+                                {% endif %}
+
+                                {% if not_current and can('permission', 'user.impersonate') %}
+                                    <a href="{{ route('admin::impersonate', {id: item.id}) }}" data-toggle="tooltip" title="{{ trans('admin::user.tt_impersonate') }}"><i class="fa fa-user-secret"></i></a>
+                                {% endif %}
+
+                                {% if can('permission', 'user.2fa') %}
+                                    <a href="{{ route('admin::user_2fa', {id: item.id}) }}" data-toggle="tooltip" title="{{ trans('admin::user.tt_2fa') }}"><i class="fa fa-key"></i></a>
+                                {% endif %}
+
+                                {% if not_current and can('permission', 'user.edit') %}
+                                    <span class="action-tuple">
+                                        <a href="#" data-action="deactivate" data-toggle="tooltip" title="{{ trans('admin::common.tt_deactivate') }}"><i class="fa fa-eye {{ item.active ? 'on' : 'off' }}"></i></a>
+                                        <a href="#" data-action="activate" data-toggle="tooltip" title="{{ trans('admin::common.tt_activate') }}"><i class="fa fa-eye-slash {{ item.active ? 'off' : 'on' }}"></i></a>
+                                    </span>
+                                {% endif %}
+
+                                {% if not_current and can('permission', 'user.delete') %}
+                                    <a href="#" data-action="delete" data-toggle="tooltip" title="{{ trans('admin::common.tt_delete') }}"><i class="fa fa-trash-o"></i></a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if can('permission', 'user.edit') %}
+                                    <a href="{{ route('admin::user_edit', {'id': item.id}) }}" class="name-link">{{ item.name }}</a>
+                                {% else %}
+                                    {{ item.name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.acl_role.name }}</td>
+                            <td>{{ item.last_login ? item.last_login|date('Y-m-d H:i:s') : '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    {{ trans('admin::common.empty') }}
+                {% endif %}
+
+                {% include 'admin::inc.pagination' with {paginator: users} %}
+            </div>
+
+            {% if users|length %}
+                {% embed 'admin::emb.group_action' with {url: route('admin::user_action')} %}
+                    {% block menu %}
+                        {% if can('permission', 'user.delete') %}
+                            <li><a href="#" data-action="delete"><i class="fa fa-trash-o">&nbsp;&nbsp;</i>{{ trans('admin::common.delete') }}</a></li>
+                        {% endif %}
+                        {% if can('permission', 'user.edit') %}
+                            <li><a href="#" data-action="activate"><i class="fa fa-eye">&nbsp;&nbsp;</i>{{ trans('admin::common.activate') }}</a></li>
+                            <li><a href="#" data-action="deactivate"><i class="fa fa-eye-slash">&nbsp;&nbsp;</i>{{ trans('admin::common.deactivate') }}</a></li>
+                        {% endif %}
+                    {% endblock %}
+                {% endembed %}
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

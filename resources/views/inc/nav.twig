@@ -1,0 +1,87 @@
+<div class="topbar">
+
+    <div class="topbar-left">
+        <div class="text-center">
+            <a href="{{ route('admin::index') }}" class="logo"><i class="icon-home icon-c-logo"></i><span>{{ config('admin.site_name') }}</span></a>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="">
+
+                <div class="pull-left">
+                    <button class="button-menu-mobile open-left">
+                        <i class="ion-navicon"></i>
+                    </button>
+                    <span class="clearfix"></span>
+                </div>
+
+                <ul class="nav navbar-nav navbar-right pull-right">
+                    <li>
+                        <a href="/" id="btn-fullscreen2" class="waves-effect" title="{{ trans('admin::common.to_site') }}" target="_blank"><i class="fa fa-globe"></i></a>
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#" id="btn-fullscreen" class="waves-effect" title="{{ trans('admin::common.full_screen') }}"><i class="icon-size-fullscreen"></i></a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle profile waves-effect" data-toggle="dropdown" aria-expanded="true">
+                            {% if layout.user.getAvatar() %}
+                                <img src="{{ layout.user.getAvatar() }}" alt="user-img" class="img-circle">
+                            {% else %}
+                                <img src="{{ asset('vendor/admin/images/empty-avatar.png') }}" alt="user-img" class="img-circle">
+                            {% endif %}
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ route('admin::user_profile') }}"><i class="ti-user m-r-5"></i>{{ trans('admin::common.top_bar.profile') }}</a></li>
+                            <li><a href="{{ route('admin::options') }}"><i class="ti-settings m-r-5"></i> {{ trans('admin::common.top_bar.settings') }}</a></li>
+                            <li><a href="{{ route('admin::logout') }}"><i class="ti-power-off m-r-5"></i> {{ trans('admin::common.top_bar.logout') }}</a></li>
+                        </ul>
+
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="left side-menu">
+    <div class="sidebar-inner slimscrollleft">
+
+        <div id="sidebar-menu">
+            <ul>
+
+                {% for section in layout.menu %}
+                    {% set nested = section.hasItems() %}
+
+                    <li {% if nested %} class="has_sub"{% endif %}>
+                        {% spaceless %}
+                            <a href="{{ nested ? 'javascript:void(0)' : section.getLink() }}" class="waves-effect waves-light {% if section.isActive() %}active{% endif %}">
+                                <i class="fa {{ section.getIcon() }}"></i>
+                                {% if section.hasCounter() %}
+                                    <span class="label label-primary pull-right">{{ section.getCounter() }}</span>
+                                {% endif %}
+                                <span>{{ section.getName() }}</span>
+                            </a>
+                        {% endspaceless %}
+                        {% if nested %}
+                            <ul class="list-unstyled">
+                                {% for item in section.getItems() %}
+                                    <li {% if item.isActive() %}class="active"{% endif %}><a href="{{ item.getLink() }}">{{ item.getName() }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
+</div>

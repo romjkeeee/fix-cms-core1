@@ -1,0 +1,37 @@
+{% extends 'admin::layout' %}
+{% import 'admin::logs.macro' as macro %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    {% if log %}
+                        <p><strong>{{ trans('admin::log.last_modified') }} {{ log.modified|date('Y-m-d H:i:s') }}</strong></p>
+
+                        <ul class="list-unstyled m-t-10">
+                            {% for entry in paginator %}
+                                <li class="">
+                                    {{ macro.row_table(entry) }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    {% else %}
+
+                        <p>{{ trans('admin::log.log_not_found') }}</p>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {{ paginator.render()|raw }}
+
+{% endblock %}
