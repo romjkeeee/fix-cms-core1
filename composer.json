@@ -1,11 +1,11 @@
 {
-    "name": "altsolution/cms-core",
-    "description": "AltSolution CMS Core admin module",
+    "name": "semisalov/fix-cms-core",
+    "description": "CMS Core admin module",
     "license": "proprietary",
     "authors": [
         {
             "name": "Alex",
-            "email": "alex@altsolution.net"
+            "email": "aleksey.semisalov@gmail.com"
         }
     ],
     "require": {
