@@ -79,7 +79,7 @@ class SeoManager implements SeoManagerInterface
      */
     private $seoRepo;
 
-    public function __construct(SeoRepositoryInterface $seoRepo)
+    public function __construct(\App\Repositories\SeoRepository $seoRepo)
     {
         $this->seoRepo = $seoRepo;
 
