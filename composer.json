@@ -9,10 +9,10 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "rcrowe/twigbridge": "^0.9.2",
-        "twig/extensions": "^1.3",
-        "twig/twig": "1.35.0",
+        "php": ">=7.2.5",
+        "rcrowe/twigbridge": "^v0.12.3",
+        "twig/extensions": "^v1.5.4",
+        "twig/twig": "3.*",
         "intervention/image": "^2.3",
         "cviebrock/image-validator": "^2.0"
     },
