@@ -28,7 +28,7 @@ class AltSolutionAdminProvider extends ServiceProvider
         $this->registerContracts();
 
         // TODO: @new_version twig and image move here
-        $this->app->register(ImageValidatorServiceProvider::class);
+        //$this->app->register(ImageValidatorServiceProvider::class);
 
         // todo: check modules registered
         //$this->app->register(Providers\Deferred::class);
