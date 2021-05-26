@@ -122,7 +122,7 @@ class UsersController extends Controller
         return $this->getValidationFactory()->make($data, [
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email,' . $modelId,
-            'avatar_file' => 'image|max:1000|image_size:>=128,>=128|image_size:<6000,<6000',
+            //'avatar_file' => 'image|max:1000|image_size:>=128,>=128|image_size:<6000,<6000',
             'password' => array_merge($modelId ? [] : ['required'], [
                 'confirmed',
                 'min:6',
