@@ -13,8 +13,7 @@
         "rcrowe/twigbridge": "^v0.12.3",
         "twig/extensions": "^v1.5.4",
         "twig/twig": "3.*",
-        "intervention/image": "^2.3",
-        "cviebrock/image-validator": "^2.0"
+        "intervention/image": "^2.3"
     },
     "require-dev": {
         "phpunit/phpunit": "5.5.*"
