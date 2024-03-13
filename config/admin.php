@@ -11,6 +11,7 @@ return [
     'items_per_page' => 20,
 
     'modules' => [
+        'admin.module.ribbon' => Modules\RibbonModule::class,
         'admin.module.core' => Modules\CoreModule::class,
         'admin.module.user' =>  Modules\UserModule::class,
         'admin.module.menu' => Modules\MenuModule::class,

@@ -1,0 +1,114 @@
+{% extends "admin::layout" %}
+
+{% block styles %}
+    <style type="text/css">
+        .not-active {
+            pointer-events: none;
+            cursor: default;
+            opacity: 0.7;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs">
+                <li class="tab active">
+                    <a href="#pane-{{ landingpages.lang.code }}" data-toggle="tab" aria-expanded="false">
+                        <span class="visible-xs"><i class="fa fa-home"></i></span>
+                        <span class="hidden-xs">{{ landingpages.lang.title }}</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        {{ form_open(form) }}
+                        {{ form_field(form, 'id') }}
+                        <input type="hidden" name="parent_id" value="{{ landingpages.parent_id ? landingpages.parent_id : app.request.input('parent_id') }}">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="pane-{{ landingpages.lang.code }}">
+                                {{ form_field(form, 'title') }}
+                                {{ form_field(form, 'lang_id') }}
+                                {{ form_field(form, 'is_not_show_title') }}
+                                {{ form_field(form, 'permalink') }}
+                                {{ form_field(form, 'file_to_download') }}
+
+                                <div id="box_is_postfix_uri"
+                                     class="{{ landingpages.isChildren() ? 'not-active' : '' }}">
+                                    {{ form_field(form, 'is_postfix_uri') }}
+                                </div>
+
+                                {{ form_field(form, 'is_show_site_menu') }}
+                                {{ form_field(form, 'is_published') }}
+                                {{ form_field(form, 'is_show_print_link') }}
+                                {{ form_field(form, 'hide_container') }}
+
+                                <fieldset>
+                                    <legend>{{ trans('admin/landingpages.og_group_label') }}</legend>
+                                    {{ form_field(form, 'og_title') }}
+                                    {{ form_field(form, 'og_description') }}
+                                    {{ form_field(form, 'og_image_url') }}
+                                    {{ form_field(form, 'og_image') }}
+                                </fieldset>
+
+                                {{ seo_admin_fieldset(landingpages, landingpages.lang.code ?? get_lang_tab().code) }}
+
+
+                            </div>
+
+                        </div>
+
+                        {{ form_submit(form) }}
+                        {{ form_close(form) }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(function () {
+
+            function resultantUri() {
+                if (!$('input[name="permalink"]').length || !$('input[name="is_postfix_uri"]').length ||
+                    !$('input[name="is_postfix_uri"][type="checkbox"]').length) {
+                    return;
+                }
+
+                var obj_permalink_help = $('input[name="permalink"]').next().children('small');
+                if (!obj_permalink_help.length) {
+                    return;
+                }
+
+                var parents_urn = '{{ landingpages.getParentUrl() }}';
+                var page_urn = $('input[name="permalink"]').val();
+                var is_postfix_uri = $('input[name="is_postfix_uri"][type="checkbox"]')[0].checked;
+                var postfix_uri = '{{ postfix_uri }}';
+                var page_uri_text = '{{ trans('admin/landingpages.permalink_help') }}';
+                var page_uri_text_undefined = '{{ trans('admin/landingpages.page_address_undefined') }}';
+
+                if (!page_urn.length) {
+                    page_uri_text = page_uri_text_undefined;
+                } else {
+                    page_uri_text += location.origin;
+                    if (parents_urn.length) {
+                        page_uri_text += parents_urn;
+                    }
+                    page_uri_text += (is_postfix_uri ? postfix_uri : '');
+                }
+
+                if (page_uri_text != obj_permalink_help.text()) {
+                    obj_permalink_help.text(page_uri_text);
+                }
+            }
+
+            resultantUri();
+            //setInterval(resultantUri, 500);
+
+        })
+    </script>
+{% endblock %}
