@@ -66,6 +66,7 @@ class AltSolutionAdminProvider extends ServiceProvider
         $app = $this->app;
 
         if (!$app->routesAreCached()) {
+
             /** @var Router $router */
             $router = $app->make(Router::class);
 
@@ -113,6 +114,7 @@ class AltSolutionAdminProvider extends ServiceProvider
                 foreach ($modules as $module) {
                     // TODO: routes registered on any request
                     $module->registerRoutes($router);
+
                 }
             });
         }

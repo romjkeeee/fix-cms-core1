@@ -1,0 +1,268 @@
+{% extends 'admin::layout' %}
+
+{% block styles %}
+    <link href="{{ asset('vendor/admin/plugins/nestable/jquery.nestable.css') }}" rel="stylesheet" />
+	<style>
+		#tree_pages .not-active {
+			pointer-events: none;
+			cursor: default;
+			opacity: 0.5;
+		 }
+
+		#tree_pages .dd3-content {
+			padding-left: 12px;
+		}
+       #tree_pages .dd3-content .not-active-root-link {
+			pointer-events: none;
+			cursor: default;
+		}
+		#tree_pages .dd3-content .with-postfix {
+			color: #848484;
+		}
+		#tree_pages .dd3-content .checkbox-custom {
+			float: left;
+			margin-top: 2px;
+		}
+		#tree_pages .dd3-content .action-tuple .fa.off {
+			display: none;
+		}
+		#tree_pages .dd3-content .page-urn {
+			color: #08298A;
+		}
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% embed 'admin::emb.top_btn' %}
+        {% block main %}
+			<div class="form-group mb-3">
+				<input type="email" class="form-control" id="searchFilterInput" placeholder="Фильтр">
+			</div>
+            <a class="btn btn-default waves-effect waves-light" href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url()}) }}"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>{{ trans('admin/landingpages.add_btn') }}</a>
+        {% endblock %}
+    {% endembed %}
+
+	<div class="col-sm-12" style="display:none;">
+		<div class="col-md-6">
+			<div class="custom-dd dd" id="nestable_list_1"></div>
+		</div>
+		<div class="col-md-6" style="display:none;">
+			<div class="custom-dd dd" id="nestable_list_2"></div>
+		</div>
+	</div>
+	<div id="tree_pages" class="row">
+		<div class="col-md-12">
+{#			{% include 'admin.includes.nav_tabs' %}#}
+			<div class="card-box rus-menu">
+				<input type="hidden" class="ent-action" value="{{ route('admin/landingpages_action', {code: get_current_admin_project_site_url()}) }}" data-url="{{ route('admin/landingpages_action', {code: get_current_admin_project_site_url()}) }}" />
+				<div class="row">
+					<div class="col-md-12">
+						{% if items|length %}
+                            <div class="custom-dd-empty dd" id="nestable_list_3">
+								<div class="tab-content">
+									{% for language, localeDesc in get_current_langs_to_admin_project() %}
+									{% set locale_active = get_checked_tab(language) %}
+									<div class="tab-pane {% if locale_active %}active{% endif %}" id="pane-{{ language }}">
+								        <ol class="dd-list">
+                                            {% for item in items[0] %}
+                                                {% if item.lang.code == language %}
+										            <li class="dd-item dd3-item js-box-item"  data-id="{{ item.is_root() ? 0 : item.id }}">
+											            <div class="dd3-content">
+                                                            {% if (item.is_root() and item.isChildren()) or not item.is_root() %}
+                                                                <div class="{{ item.isChildren() and not item.is_root() ? 'not-active' : '' }} js-checkbox checkbox checkbox-custom">
+                                                                    <input class="{{ item.is_root() ? 'js-is-root-checkbox' : 'js-is-checkbox' }}" type="checkbox" value="{{ item.is_root() ? 0 : item.id }}">
+                                                                    <label></label>
+                                                                </div>
+                                                            {% endif %}
+                                                            <a class="{{ item.is_postfix_uri ? 'with-postfix' : '' }} {{ item.is_root() ? 'not-active-root-link' : '' }}" href="{{ item.is_root() ? 'javascript: void(0);' : route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: item.id}) }}">
+                                                                {{ item.title }}
+                                                            </a>
+                                                            {% if not item.is_root() %}
+                                                                &nbsp;&nbsp;
+                                                                <a target="_blank" class="page-urn" href="{{ get_lang_url(language) ~ item.getUrl(items,item.parent_id,item) }}">{{ item.getUrl(items,item.parent_id,item) }}</a>
+                                                            {% endif %}
+												            <span class="list-icons">
+                                                                {% if item.is_root() %}
+                                                                    <a href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: '', parent_id: item.id}) }}"><i class="fa fa-plus"></i></a>
+                                                                {% else %}
+                                                                    <a href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: item.id}) }}"><i class="fa fa-pencil"></i></a>
+                                                                    <span class="action-tuple">
+                                                                        <a href="javascript: void(0);" data-action="hide"><i class="fa fa-eye {{ item.is_published ? 'on' : 'off' }}"></i></a>
+                                                                        <a href="javascript: void(0);" data-action="publish"><i class="fa fa-eye-slash {{ item.is_published ? 'off' : 'on' }}"></i></a>
+                                                                    </span>
+                                                                    <a href="{{ route('admin/landingblocks_list', {code: get_current_admin_project_site_url(), landingpage_id: item.id}) }}"><i class="fa fa-list-ul"></i></a>
+                                                                    {% if item.lvl < 3  %}
+                                                                        <a href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: '', parent_id: item.id}) }}"><i class="fa fa-plus"></i></a>
+                                                                    {% endif %}
+                                                                    <a href="javascript: void(0);"><i class="fa fa-arrows-v js-snapnode"></i></a>
+                                                                    <a href="javascript: void(0);" class="copy-page js-copy"><i class="fa fa-copy"></i></a>
+                                                                    <a href="{{ route('admin/landingpages_delete',{code: get_current_admin_project_site_url(), id: item.id}) }}" data-cms-toggle="confirm"><i class="fa fa-trash-o"></i></a>
+                                                                {% endif %}
+                                                            </span>
+											            </div>
+                                                    </li>
+										        {% endif %}
+                                                <ol>
+                                                {% for children in items[item.id] %}
+                                                    {% include 'admin.landingpages._landingpages' with {children: children} %}
+                                                {% endfor %}
+                                                </ol>
+									        {% endfor %}
+								        </ol>
+									</div>
+									{% endfor %}
+								</div>
+                            </div>
+						{% else %}
+							{{ trans('admin/landingpages.empty') }}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			{% if items|length %}
+				<div class="row">
+					<div class="col-sm-12 col-md-12 col-lg-12">
+						<button disabled id="delete_pages_button" type="button" class="btn btn-default waves-effect waves-light" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-trash-o">&nbsp;&nbsp;</i>{{ trans('admin/landingpages.delete') }}</button>
+					</div>
+				</div>
+				{% include 'admin::inc.listmodal' %}
+			{% endif %}
+		</div>
+	</div>
+
+    <div id="snapnode-modal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">{{ trans('admin/landingpages.move_item_caption') }}</h4>
+                </div>
+                <div class="modal-body js-move-cont">
+                    <!-- by AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(function() {
+			CMS.setCopyUrl({{ route('admin/landingpages_copied',{code: get_current_admin_project_site_url()})|json_encode|raw }})
+            var parent_moving_pages = '';
+			$('.js-snapnode').on('click', function(e) {
+                e.preventDefault();
+
+				parent_moving_pages = $(this).closest('.js-box-item');
+
+                $('#snapnode-modal').modal('show');
+                var id = $(this).closest('.dd-item').attr('data-id');
+                move(id);
+            });
+
+			function move(id) {
+				$('.js-move-cont').empty();
+
+
+                var url = {{ route('admin/landingpages_moving',{code: get_current_admin_project_site_url()})|json_encode|raw }};
+                var req = CMS.ajaxPost(url, {id: id});
+                req.done(function (html) {
+					$('.js-move-cont').html(html);
+				})
+			};
+
+			function selectMovingPages()
+			{
+				if(!parent_moving_pages.length || !$('#snapnode-modal').length)
+				{
+					return;
+				}
+
+				var color = $('#snapnode-modal').is(":visible") ? '#ccffcc' : '#f4f8fb';
+				parent_moving_pages.find('.dd3-content').css('background-color', color);
+			}
+			setInterval(selectMovingPages, 500);
+
+			$('.modal button.delete-yes').on('click', function (e) {
+				var $this = $(e.currentTarget);
+				var data = [];
+				var url = {{ route('admin/landingpages_action', {code: get_current_admin_project_site_url()})|json_encode|raw }};
+				var action = 'delete';
+				$('#tree_pages div.checkbox input:checked').each(function (index) {
+					if($(this).hasClass('js-is-root-checkbox'))
+					{
+						return true;
+					}
+
+					data.push($(this).val());
+				});
+				if(!data.length)
+				{
+					CMS.notify('warning', '{{ trans('admin/landingpages.no_pages_found_for_deletion') }}');
+					return;
+				}
+
+				$this.addClass('not-active');
+				var req = CMS.ajaxPost(url, {
+					action: action,
+					ids: data
+				});
+				req.done(function (msg) {
+					CMS.notify('success', '{{ trans('admin/landingpages.deleted_all') }}');
+					$this.removeClass('not-active');
+					$('.modal button.delete-no').click();
+					location.reload();
+				});
+				req.fail(function (jqXHR, textStatus) {
+					$this.removeClass('not-active');
+					CMS.notify('error', 'ERROR');
+				});
+			});
+			function initCheckboxPage()
+			{
+				if($('#tree_pages div.checkbox input').length)
+				{
+					$('#tree_pages div.checkbox input').prop('checked', false);
+				}
+			}
+			//initCheckboxPage();
+
+			$('.js-checkbox').on('change', function (e) {
+				var $this = $(e.currentTarget);
+				var state = $this.find('input:checkbox:first').prop('checked');
+				$this.closest('.js-box-item').find('div.checkbox input').each(function (index) {
+					if($(this).parent().hasClass('not-active'))
+					{
+						return true;
+					}
+
+					$(this).prop('checked', state);
+				});
+
+				if($('#tree_pages .js-is-checkbox:checked').length)
+				{
+					$('#delete_pages_button').prop('disabled', false);
+				} else {
+					$('#delete_pages_button').prop('disabled', true);
+					$('.js-is-root-checkbox').prop('checked', false);
+				}
+			});
+
+        });
+    </script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-searcher/0.3.0/jquery.searcher.min.js"></script>
+    <script>
+      $("#tree_pages").searcher({
+          itemSelector: ".dd-item.dd3-item.js-box-item",
+          textSelector: "a",
+          inputSelector: "#searchFilterInput",
+          toggle: function(item, containsText) {
+              if (containsText)
+                  $(item).fadeIn();
+              else
+                  $(item).fadeOut();
+          }
+      });
+    </script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% if item.lang.code == language %}
+    <li class="dd-item dd3-item js-box-item" data-id="{{ children.is_root() ? 0 : children.id }}">
+        <div class="dd3-content">
+            {% if (children.is_root() and children.isChildren()) or not children.is_root() %}
+                <div class="{{ children.isChildren() and not children.is_root() ? 'not-active' : '' }} js-checkbox checkbox checkbox-custom">
+                    <input class="{{ children.is_root() ? 'js-is-root-checkbox' : 'js-is-checkbox' }}" type="checkbox"
+                           value="{{ children.is_root() ? 0 : children.id }}">
+                    <label></label>
+                </div>
+            {% endif %}
+            <a class="{{ children.is_postfix_uri ? 'with-postfix' : '' }} {{ children.is_root() ? 'not-active-root-link' : '' }}"
+               href="{{ children.is_root() ? 'javascript: void(0);' : route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: children.id}) }}">
+                {{ children.title }}
+            </a>
+            {% if not children.is_root() %}
+                &nbsp;&nbsp;
+                <a target="_blank" class="page-urn"
+                   href="{{ get_lang_url(language) ~ children.getUrl(items,children.parent_id,children) }}">{{ children.getUrl(items,children.parent_id,children) }}</a>
+            {% endif %}
+            <span class="list-icons">
+                {% if children.is_root() %}
+                    <a href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: '', parent_id: children.id}) }}">
+                        <i class="fa fa-plus"></i>
+                    </a>
+				{% else %}
+                    <a href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: children.id}) }}">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                    <span class="action-tuple">
+                        <a href="javascript: void(0);" data-action="hide">
+                            <i class="fa fa-eye {{ children.is_published ? 'on' : 'off' }}"></i>
+                        </a>
+                        <a href="javascript: void(0);" data-action="publish">
+                            <i class="fa fa-eye-slash {{ children.is_published ? 'off' : 'on' }}"></i>
+                        </a>
+                    </span>
+                    <a href="{{ route('admin/landingblocks_list', {code: get_current_admin_project_site_url(), landingpage_id: children.id}) }}">
+                        <i class="fa fa-list-ul"></i>
+                    </a>
+					{% if children.lvl < 3 %}
+                        <a href="{{ route('admin/landingpages_edit', {code: get_current_admin_project_site_url(), id: '', parent_id: children.id}) }}">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    {% endif %}
+					<a href="javascript: void(0);"><i class="fa fa-arrows-v js-snapnode"></i></a>
+                    <a href="javascript: void(0);" class="copy-page js-copy">
+                        <i class="fa fa-copy"></i>
+                    </a>
+                    <a href="{{ route('admin/landingpages_delete',{code: get_current_admin_project_site_url(), id: children.id}) }}"
+                       data-cms-toggle="confirm"><i class="fa fa-trash-o"></i>
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    </li>
+{% endif %}
+
+{% if items[children.id] %}
+    <ol>
+        {% for child in items[children.id] %}
+            {% include 'admin.landingpages._landingpages' with {children: child} %}
+        {% endfor %}
+    </ol>
+{% endif %}
