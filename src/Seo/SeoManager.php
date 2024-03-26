@@ -415,12 +415,13 @@ class SeoManager implements SeoManagerInterface
 
     public function renderFieldset(SeoInterface $model, $locale = null)
     {
+
         if ($locale === null) {
             $locale = config('app.locale');
         }
 
         $fields = $model->seoFields();
-        $values = $model->seoAttributes();
+        $values = $model->seoAttributes($locale);
 
         $form = cms_construct_form(function () use ($locale, $fields, $values) {
             foreach ($fields as $name => $options) {

@@ -19,13 +19,13 @@ trait SeoTrait
         return config('seo.default_fields');
     }
 
-    public function seoAttributes()
+    public function seoAttributes($locale)
     {
         $cacheKey = 'seo_model_' . $this->getTable() . '_' . $this->getKey();
 
-        return \Cache::remember($cacheKey, config('seo.cache_ttl'), function () {
+        return \Cache::remember($cacheKey, config('seo.cache_ttl'), function () use ($locale) {
             $fields = $this->seoFields();
-            $properties = $this->seoModelProperties;
+            $properties = $this->seoModelProperties1($locale);
             $propArr = [];
             foreach ($properties as $prop) {
                 $propArr[$prop->locale][$prop->key] = $prop->value;
