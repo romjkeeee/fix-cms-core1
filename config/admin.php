@@ -19,6 +19,7 @@ return [
         'admin.module.option' => Modules\OptionModule::class,
         'admin.module.log' => Modules\LogModule::class,
         'admin.module.email_template' => Modules\EmailTemplateModule::class,
+        'admin.module.home_review' => Modules\HomeReviewModule::class,
     ],
     'modules_disabled' => [
         //
