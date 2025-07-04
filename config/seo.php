@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'separator' => ' – ',
+    'separator' => ' | ',
     'default_fields' => [
         'title' => [
             'label' => 'admin::seo.f_title',
